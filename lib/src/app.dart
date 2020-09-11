@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutterrestapi/src/View/AddTransaksi_view.dart';
 import 'package:flutterrestapi/src/View/AddUser_view.dart';
+import 'package:flutterrestapi/src/View/AddHadiah_view.dart';
 import 'package:flutterrestapi/src/View/HomePage_view.dart';
+import 'package:flutterrestapi/src/View/HadiahPage_view.dart';
+import 'package:flutterrestapi/src/View/TransaksiPage_view.dart';
 
 GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
@@ -12,9 +16,9 @@ class DrawerItem {
 
 class App extends StatefulWidget {
   final drawerItems = [
-    new DrawerItem("List User", Icons.info),
-    new DrawerItem("List Transaksi", Icons.info),
-    new DrawerItem("List Hadiah", Icons.info)
+    new DrawerItem("List User", Icons.people),
+    new DrawerItem("List Transaksi", Icons.account_balance_wallet),
+    new DrawerItem("List Hadiah", Icons.card_giftcard),
   ];
 
   @override
@@ -23,16 +27,19 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int _selectedDrawerIndex = 0;
+  int _checkActiveDrawer = 0;
 
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
+        _checkActiveDrawer = 0;
         return new HomeScreen();
       case 1:
-        return new HomeScreen();
+        _checkActiveDrawer = 1;
+        return new TransaksiScreen();
       case 2:
-        return new HomeScreen();
-
+        _checkActiveDrawer = 2;
+        return new HadiahScreen();
       default:
         return new Text("Error");
     }
@@ -40,7 +47,7 @@ class _AppState extends State<App> {
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
-    Navigator.of(context).pop(); // close the drawer
+    Navigator.pop(_scaffoldState.currentState.context, true);
   }
 
   @override
@@ -73,15 +80,50 @@ class _AppState extends State<App> {
           actions: <Widget>[
             GestureDetector(
               onTap: () async {
-                var result = await Navigator.push(
-                  _scaffoldState.currentContext,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return AddUser();
-                  }),
-                );
-                if (result != null) {
-                  setState(() {});
+                switch (_checkActiveDrawer) {
+                  case 0:
+                    var result = await Navigator.push(
+                      _scaffoldState.currentContext,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return AddUser();
+                      }),
+                    );
+                    if (result != null) {
+                      setState(() {});
+                    }
+                    break;
+                  case 1:
+                    var result = await Navigator.push(
+                      _scaffoldState.currentContext,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return AddTransaksi();
+                      }),
+                    );
+                    if (result != null) {
+                      setState(() {});
+                    }
+                    break;
+                  case 2:
+                    var result = await Navigator.push(
+                      _scaffoldState.currentContext,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return AddHadiah();
+                      }),
+                    );
+                    if (result != null) {
+                      setState(() {});
+                    }
+                    break;
                 }
+                // var result = await Navigator.push(
+                //   _scaffoldState.currentContext,
+                //   MaterialPageRoute(builder: (BuildContext context) {
+                //     return AddUser();
+                //   }),
+                // );
+                // if (result != null) {
+                //   setState(() {});
+                // }
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 16.0),
@@ -102,55 +144,6 @@ class _AppState extends State<App> {
             ],
           ),
         ),
-        // drawer: Drawer(
-        //   child: ListView(
-        //     children: [
-        //       DrawerHeader(
-        //         child: Text(
-        //           "Menu Admin",
-        //           style: TextStyle(
-        //             color: Colors.white,
-        //           ),
-        //         ),
-        //         decoration: BoxDecoration(
-        //           color: Colors.blue,
-        //         ),
-        //       ),
-        //       ListTile(
-        //         title: Text(
-        //           "List User",
-        //           style: TextStyle(
-        //             color: Colors.black,
-        //           ),
-        //         ),
-        //         onTap: () {
-        //           Navigator.of(context)
-        //               .pushReplacement(new MaterialPageRoute(builder: (_) {
-        //             return new App();
-        //           }));
-        //         },
-        //       ),
-        //       ListTile(
-        //         title: Text(
-        //           "List Transaksi",
-        //           style: TextStyle(
-        //             color: Colors.black,
-        //           ),
-        //         ),
-        //         onTap: () {},
-        //       ),
-        //       ListTile(
-        //         title: Text(
-        //           "List Hadiah",
-        //           style: TextStyle(
-        //             color: Colors.black,
-        //           ),
-        //         ),
-        //         onTap: () {},
-        //       ),
-        //     ],
-        //   ),
-        // ),
         body: _getDrawerItemWidget(_selectedDrawerIndex),
       ),
     );

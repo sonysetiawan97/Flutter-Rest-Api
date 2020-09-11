@@ -1,39 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutterrestapi/src/model/admin.dart';
-import 'package:flutterrestapi/src/service/adminservice.dart';
+import 'package:flutterrestapi/src/model/transaksi.dart';
+import 'package:flutterrestapi/src/service/transaksiservice.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
-class AddUser extends StatefulWidget {
+class AddTransaksi extends StatefulWidget {
   @override
-  _AddUserState createState() => _AddUserState();
+  _AddTransaksiState createState() => _AddTransaksiState();
 
-  Admin admin;
+  Transaksi transaksi;
 
-  AddUser({this.admin});
+  AddTransaksi({this.transaksi});
 }
 
-class _AddUserState extends State<AddUser> {
-  AdminApiService _apiService = AdminApiService();
+class _AddTransaksiState extends State<AddTransaksi> {
+  TransaksiApiService _apiService = TransaksiApiService();
 
   bool _isLoading = false;
+  bool _isFieldIdTransaksi;
   bool _isFieldIdUserValid;
-  bool _isFieldFirstNameValid;
-  bool _isFieldLastNameValid;
+  bool _isFieldTotalTransaksi;
 
+  TextEditingController _controllerIdTransaksi = TextEditingController();
   TextEditingController _controllerIdUser = TextEditingController();
-  TextEditingController _controllerFirstName = TextEditingController();
-  TextEditingController _controllerLastName = TextEditingController();
+  TextEditingController _controllerTotalTransaksi = TextEditingController();
 
   @override
   void initState() {
-    if (widget.admin != null) {
+    if (widget.transaksi != null) {
+      _isFieldIdTransaksi = true;
+      _controllerIdTransaksi.text = widget.transaksi.id_transaksi.toString();
       _isFieldIdUserValid = true;
-      _controllerIdUser.text = widget.admin.id_user.toString();
-      _isFieldFirstNameValid = true;
-      _controllerFirstName.text = widget.admin.first_name;
-      _isFieldLastNameValid = true;
-      _controllerLastName.text = widget.admin.last_name;
+      _controllerIdUser.text = widget.transaksi.id_user.toString();
+      _isFieldTotalTransaksi = true;
+      _controllerTotalTransaksi.text =
+          widget.transaksi.total_transaksi.toString();
     }
     super.initState();
   }
@@ -44,7 +45,7 @@ class _AddUserState extends State<AddUser> {
       key: _scaffoldState,
       appBar: AppBar(
         title: Text(
-          widget.admin == null ? "Add User" : "Edit User",
+          widget.transaksi == null ? "Add Transaksi" : "Edit Transaksi",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -55,19 +56,19 @@ class _AddUserState extends State<AddUser> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                _buildTextFieldIdTransaksi(),
                 _buildTextFieldIdUser(),
-                _buildTextFieldFirstName(),
-                _buildTextFieldLastName(),
+                _buildTextFieldTotalTransaksi(),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: RaisedButton(
                     onPressed: () {
                       if (_isFieldIdUserValid == null ||
-                          _isFieldFirstNameValid == null ||
-                          _isFieldLastNameValid == null ||
+                          _isFieldIdTransaksi == null ||
+                          _isFieldTotalTransaksi == null ||
                           !_isFieldIdUserValid ||
-                          !_isFieldFirstNameValid ||
-                          !_isFieldLastNameValid) {
+                          !_isFieldIdTransaksi ||
+                          !_isFieldTotalTransaksi) {
                         _scaffoldState.currentState.showSnackBar(SnackBar(
                           content: Text("Please fill all field"),
                         ));
@@ -77,15 +78,17 @@ class _AddUserState extends State<AddUser> {
 
                       int id_user =
                           int.parse(_controllerIdUser.text.toString());
-                      String first_name = _controllerFirstName.text.toString();
-                      String last_name = _controllerLastName.text.toString();
-                      Admin admin = Admin(
+                      int id_transaksi =
+                          int.parse(_controllerIdTransaksi.text.toString());
+                      int total_transaksi =
+                          int.parse(_controllerTotalTransaksi.text.toString());
+                      Transaksi transaksi = Transaksi(
                           id_user: id_user,
-                          first_name: first_name,
-                          last_name: last_name);
+                          id_transaksi: id_transaksi,
+                          total_transaksi: total_transaksi);
 
-                      if (widget.admin == null) {
-                        _apiService.postUsers(admin).then((isSuccess) {
+                      if (widget.transaksi == null) {
+                        _apiService.postTransaksi(transaksi).then((isSuccess) {
                           setState(() => _isLoading = false);
                           if (isSuccess) {
                             Navigator.pop(
@@ -97,8 +100,8 @@ class _AddUserState extends State<AddUser> {
                           }
                         });
                       } else {
-                        admin.id_user = widget.admin.id_user;
-                        _apiService.putUsers(admin).then((isSuccess) {
+                        transaksi.id_transaksi = widget.transaksi.id_transaksi;
+                        _apiService.putTransaksi(transaksi).then((isSuccess) {
                           setState(() => _isLoading = false);
                           if (isSuccess) {
                             Navigator.pop(
@@ -112,7 +115,9 @@ class _AddUserState extends State<AddUser> {
                       }
                     },
                     child: Text(
-                      widget.admin == null ? "Submit User" : "Update User",
+                      widget.transaksi == null
+                          ? "Submit Transaksi"
+                          : "Update Transaksi",
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -163,39 +168,39 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  Widget _buildTextFieldFirstName() {
+  Widget _buildTextFieldIdTransaksi() {
     return TextField(
-      controller: _controllerFirstName,
+      controller: _controllerIdTransaksi,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: "First Name User",
-        errorText: _isFieldFirstNameValid == null || _isFieldFirstNameValid
+        labelText: "ID transaksi",
+        errorText: _isFieldIdTransaksi == null || _isFieldIdTransaksi
             ? null
-            : "First name user require",
+            : "ID transaksi require",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
-        if (isFieldValid != _isFieldFirstNameValid) {
-          setState(() => _isFieldFirstNameValid = isFieldValid);
+        if (isFieldValid != _isFieldIdTransaksi) {
+          setState(() => _isFieldIdTransaksi = isFieldValid);
         }
       },
     );
   }
 
-  Widget _buildTextFieldLastName() {
+  Widget _buildTextFieldTotalTransaksi() {
     return TextField(
-      controller: _controllerLastName,
+      controller: _controllerTotalTransaksi,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: "Last Name User",
-        errorText: _isFieldLastNameValid == null || _isFieldLastNameValid
+        labelText: "Total transaksi",
+        errorText: _isFieldTotalTransaksi == null || _isFieldTotalTransaksi
             ? null
-            : "Last name user require",
+            : "Total transaksi require",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
-        if (isFieldValid != _isFieldLastNameValid) {
-          setState(() => _isFieldLastNameValid = isFieldValid);
+        if (isFieldValid != _isFieldTotalTransaksi) {
+          setState(() => _isFieldTotalTransaksi = isFieldValid);
         }
       },
     );

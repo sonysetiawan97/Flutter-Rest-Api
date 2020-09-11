@@ -1,5 +1,5 @@
 import 'package:flutterrestapi/src/model/transaksi.dart';
-import 'package:http/http.dart' show Client, Response, delete;
+import 'package:http/http.dart' show Client;
 
 class TransaksiApiService {
   final String baseUrl = "http://10.0.2.2/rest_ci/index.php";

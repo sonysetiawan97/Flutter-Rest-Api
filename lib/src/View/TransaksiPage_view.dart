@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutterrestapi/src/model/admin.dart';
-import 'package:flutterrestapi/src/service/adminservice.dart';
-import 'package:flutterrestapi/src/View/AddUser_view.dart';
+import 'package:flutterrestapi/src/model/transaksi.dart';
+import 'package:flutterrestapi/src/service/transaksiservice.dart';
+import 'package:flutterrestapi/src/View/AddTransaksi_view.dart';
 
-class HomeScreen extends StatefulWidget {
-  _HomeScreenState createState() => _HomeScreenState();
+import 'AddTransaksi_view.dart';
+
+class TransaksiScreen extends StatefulWidget {
+  _TransaksiScreenState createState() => _TransaksiScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  AdminApiService apiService;
+class _TransaksiScreenState extends State<TransaksiScreen> {
+  TransaksiApiService apiService;
   BuildContext context;
 
   @override
   void initState() {
     super.initState();
-    apiService = AdminApiService();
+    apiService = TransaksiApiService();
   }
 
   @override
@@ -22,15 +24,16 @@ class _HomeScreenState extends State<HomeScreen> {
     this.context = context;
     return SafeArea(
       child: FutureBuilder(
-        future: apiService.getUsers(),
-        builder: (BuildContext context, AsyncSnapshot<List<Admin>> snapshot) {
+        future: apiService.getTransaksi(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Transaksi>> snapshot) {
           if (snapshot.hasError) {
             return Center(
               child: Text(
                   "Something wrong with message: ${snapshot.error.toString()}"),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
-            List<Admin> users = snapshot.data;
+            List<Transaksi> users = snapshot.data;
             return _buildListView(users);
           } else {
             return Center(
@@ -42,12 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildListView(List<Admin> users) {
+  Widget _buildListView(List<Transaksi> transaksis) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListView.builder(
         itemBuilder: (context, index) {
-          Admin user = users[index];
+          Transaksi transaksi = transaksis[index];
           return Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Card(
@@ -57,10 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      user.first_name + " " + user.last_name,
+                      "ID Transaksi: " + transaksi.id_transaksi.toString(),
                       style: Theme.of(context).textTheme.title,
                     ),
-                    Text("Point belanja: " + user.point_user.toString()),
+                    Text("Nama user: " +
+                        transaksi.first_name +
+                        " " +
+                        transaksi.last_name),
+                    Text("Total Transaksi: " +
+                        transaksi.total_transaksi.toString()),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -72,14 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return AlertDialog(
                                     title: Text("Warning"),
                                     content: Text(
-                                        "Are you sure want to delete data profile ${user.first_name} ${user.last_name}?"),
+                                        "Are you sure want to delete data transaksi ${transaksi.id_transaksi} ?"),
                                     actions: <Widget>[
                                       FlatButton(
                                         child: Text("Yes"),
                                         onPressed: () {
                                           Navigator.pop(context);
                                           apiService
-                                              .deleteUsers(user.id_user)
+                                              .deleteTransaksi(
+                                                  transaksi.id_transaksi)
                                               .then((isSuccess) {
                                             if (isSuccess) {
                                               setState(() {});
@@ -115,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () async {
                             var result = await Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return AddUser(admin: user);
+                              return AddTransaksi(transaksi: transaksi);
                             }));
                             if (result != null) {
                               setState(() {});
@@ -134,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-        itemCount: users.length,
+        itemCount: transaksis.length,
       ),
     );
   }

@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutterrestapi/src/model/admin.dart';
-import 'package:flutterrestapi/src/service/adminservice.dart';
+import 'package:flutterrestapi/src/model/hadiah.dart';
+import 'package:flutterrestapi/src/service/hadiahservice.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
-class AddUser extends StatefulWidget {
+class AddHadiah extends StatefulWidget {
   @override
-  _AddUserState createState() => _AddUserState();
+  _AddHadiahState createState() => _AddHadiahState();
 
-  Admin admin;
+  Hadiah hadiah;
 
-  AddUser({this.admin});
+  AddHadiah({this.hadiah});
 }
 
-class _AddUserState extends State<AddUser> {
-  AdminApiService _apiService = AdminApiService();
+class _AddHadiahState extends State<AddHadiah> {
+  HadiahApiService _apiService = HadiahApiService();
 
   bool _isLoading = false;
-  bool _isFieldIdUserValid;
-  bool _isFieldFirstNameValid;
-  bool _isFieldLastNameValid;
+  bool _isFieldIdHadiahValid;
+  bool _isFieldNamaHadiahValid;
+  bool _isFieldPointHadiahValid;
 
-  TextEditingController _controllerIdUser = TextEditingController();
-  TextEditingController _controllerFirstName = TextEditingController();
-  TextEditingController _controllerLastName = TextEditingController();
+  TextEditingController _controllerIdHadiah = TextEditingController();
+  TextEditingController _controllerNamaHadiah = TextEditingController();
+  TextEditingController _controllerPointHadiah = TextEditingController();
 
   @override
   void initState() {
-    if (widget.admin != null) {
-      _isFieldIdUserValid = true;
-      _controllerIdUser.text = widget.admin.id_user.toString();
-      _isFieldFirstNameValid = true;
-      _controllerFirstName.text = widget.admin.first_name;
-      _isFieldLastNameValid = true;
-      _controllerLastName.text = widget.admin.last_name;
+    if (widget.hadiah != null) {
+      _isFieldIdHadiahValid = true;
+      _controllerIdHadiah.text = widget.hadiah.id_hadiah.toString();
+      _isFieldNamaHadiahValid = true;
+      _controllerNamaHadiah.text = widget.hadiah.nama_hadiah;
+      _isFieldPointHadiahValid = true;
+      _controllerPointHadiah.text = widget.hadiah.point_hadiah.toString();
     }
     super.initState();
   }
@@ -44,7 +44,7 @@ class _AddUserState extends State<AddUser> {
       key: _scaffoldState,
       appBar: AppBar(
         title: Text(
-          widget.admin == null ? "Add User" : "Edit User",
+          widget.hadiah == null ? "Add Hadiah" : "Edit Hadiah",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -56,18 +56,18 @@ class _AddUserState extends State<AddUser> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 _buildTextFieldIdUser(),
-                _buildTextFieldFirstName(),
-                _buildTextFieldLastName(),
+                _buildTextFieldNamaHadiah(),
+                _buildTextFieldPointHadiah(),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: RaisedButton(
                     onPressed: () {
-                      if (_isFieldIdUserValid == null ||
-                          _isFieldFirstNameValid == null ||
-                          _isFieldLastNameValid == null ||
-                          !_isFieldIdUserValid ||
-                          !_isFieldFirstNameValid ||
-                          !_isFieldLastNameValid) {
+                      if (_isFieldIdHadiahValid == null ||
+                          _isFieldNamaHadiahValid == null ||
+                          _isFieldPointHadiahValid == null ||
+                          !_isFieldIdHadiahValid ||
+                          !_isFieldNamaHadiahValid ||
+                          !_isFieldPointHadiahValid) {
                         _scaffoldState.currentState.showSnackBar(SnackBar(
                           content: Text("Please fill all field"),
                         ));
@@ -75,17 +75,19 @@ class _AddUserState extends State<AddUser> {
                       }
                       setState(() => _isLoading = true);
 
-                      int id_user =
-                          int.parse(_controllerIdUser.text.toString());
-                      String first_name = _controllerFirstName.text.toString();
-                      String last_name = _controllerLastName.text.toString();
-                      Admin admin = Admin(
-                          id_user: id_user,
-                          first_name: first_name,
-                          last_name: last_name);
+                      int id_hadiah =
+                          int.parse(_controllerIdHadiah.text.toString());
+                      String nama_hadiah =
+                          _controllerNamaHadiah.text.toString();
+                      int point_hadiah =
+                          int.parse(_controllerPointHadiah.text.toString());
+                      Hadiah hadiah = Hadiah(
+                          id_hadiah: id_hadiah,
+                          nama_hadiah: nama_hadiah,
+                          point_hadiah: point_hadiah);
 
-                      if (widget.admin == null) {
-                        _apiService.postUsers(admin).then((isSuccess) {
+                      if (widget.hadiah == null) {
+                        _apiService.postHadiah(hadiah).then((isSuccess) {
                           setState(() => _isLoading = false);
                           if (isSuccess) {
                             Navigator.pop(
@@ -97,8 +99,8 @@ class _AddUserState extends State<AddUser> {
                           }
                         });
                       } else {
-                        admin.id_user = widget.admin.id_user;
-                        _apiService.putUsers(admin).then((isSuccess) {
+                        hadiah.id_hadiah = widget.hadiah.id_hadiah;
+                        _apiService.putHadiah(hadiah).then((isSuccess) {
                           setState(() => _isLoading = false);
                           if (isSuccess) {
                             Navigator.pop(
@@ -112,12 +114,12 @@ class _AddUserState extends State<AddUser> {
                       }
                     },
                     child: Text(
-                      widget.admin == null ? "Submit User" : "Update User",
+                      widget.hadiah == null ? "Submit Hadiah" : "Update Hadiah",
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    color: Colors.blue[600],
+                    color: Colors.blue,
                   ),
                 ),
               ],
@@ -146,56 +148,56 @@ class _AddUserState extends State<AddUser> {
 
   Widget _buildTextFieldIdUser() {
     return TextField(
-      controller: _controllerIdUser,
+      controller: _controllerIdHadiah,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: "ID User",
-        errorText: _isFieldIdUserValid == null || _isFieldIdUserValid
+        labelText: "ID hadiah",
+        errorText: _isFieldIdHadiahValid == null || _isFieldIdHadiahValid
             ? null
-            : "ID user require",
+            : "ID hadiah require",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
-        if (isFieldValid != _isFieldIdUserValid) {
-          setState(() => _isFieldIdUserValid = isFieldValid);
+        if (isFieldValid != _isFieldIdHadiahValid) {
+          setState(() => _isFieldIdHadiahValid = isFieldValid);
         }
       },
     );
   }
 
-  Widget _buildTextFieldFirstName() {
+  Widget _buildTextFieldNamaHadiah() {
     return TextField(
-      controller: _controllerFirstName,
+      controller: _controllerNamaHadiah,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: "First Name User",
-        errorText: _isFieldFirstNameValid == null || _isFieldFirstNameValid
+        labelText: "Nama Hadiah",
+        errorText: _isFieldNamaHadiahValid == null || _isFieldNamaHadiahValid
             ? null
-            : "First name user require",
+            : "Nama hadiah require",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
-        if (isFieldValid != _isFieldFirstNameValid) {
-          setState(() => _isFieldFirstNameValid = isFieldValid);
+        if (isFieldValid != _isFieldNamaHadiahValid) {
+          setState(() => _isFieldNamaHadiahValid = isFieldValid);
         }
       },
     );
   }
 
-  Widget _buildTextFieldLastName() {
+  Widget _buildTextFieldPointHadiah() {
     return TextField(
-      controller: _controllerLastName,
+      controller: _controllerPointHadiah,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: "Last Name User",
-        errorText: _isFieldLastNameValid == null || _isFieldLastNameValid
+        labelText: "Point Hadiah",
+        errorText: _isFieldPointHadiahValid == null || _isFieldPointHadiahValid
             ? null
-            : "Last name user require",
+            : "Point hadiah require",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
-        if (isFieldValid != _isFieldLastNameValid) {
-          setState(() => _isFieldLastNameValid = isFieldValid);
+        if (isFieldValid != _isFieldPointHadiahValid) {
+          setState(() => _isFieldPointHadiahValid = isFieldValid);
         }
       },
     );
