@@ -2,6 +2,8 @@
 
 Flutter App menggunakan Rest Api
 
+Untuk pengujian dilakukan dengan menggunakan emulator android
+
 ### Rest Api
 
 Rest api dapat di akses pada url:
