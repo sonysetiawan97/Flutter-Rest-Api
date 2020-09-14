@@ -17,7 +17,6 @@ https://github.com/sonysetiawan97/rest-ci
 - Delete
 - Dropdown user ketika Insert transaksi
 - Tukar point
-<<<<<<< HEAD
 
 ## Getting Started
 
@@ -31,5 +30,3 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-=======
->>>>>>> f3aac739a7fe73c50eaa056abd66cdafd5a7667e
