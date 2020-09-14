@@ -2,7 +2,7 @@ import 'package:flutterrestapi/src/model/admin.dart';
 import 'package:http/http.dart' show Client, Response, delete;
 
 class AdminApiService {
-  final String baseUrl = "http://10.0.2.2/rest_ci/index.php";
+  final String baseUrl = "http://192.168.0.110/rest_ci/index.php";
   Client client = Client();
 
   Future<List<Admin>> getUsers() async {

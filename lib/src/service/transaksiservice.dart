@@ -2,7 +2,7 @@ import 'package:flutterrestapi/src/model/transaksi.dart';
 import 'package:http/http.dart' show Client;
 
 class TransaksiApiService {
-  final String baseUrl = "http://10.0.2.2/rest_ci/index.php";
+  final String baseUrl = "http://192.168.0.110/rest_ci/index.php";
   Client client = Client();
 
   Future<List<Transaksi>> getTransaksi() async {
